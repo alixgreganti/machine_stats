@@ -15,17 +15,18 @@ storage_total=0
 for i in $storage_info; do
     if [[ $i =~ [0-9]+[MGT] ]]; then
         i=${i%[MGT]}
-        if [[ $i =~ [0-9]+ ]]; then
+        if [[ $i =~ ^[0-9]+\.?[0-9]* ]]; then
             if [[ ${i: -1} == "T" ]]; then
-                i=$((i*1024*1024))
+                i=$(echo "$i*1024*1024" | bc)
             elif [[ ${i: -1} == "G" ]]; then
-                i=$((i*1024))
+                i=$(echo "$i*1024" | bc)
             fi
-            storage_total=$((storage_total+i))
+            storage_total=$(echo "$storage_total+$i" | bc)
         fi
     fi
 done
-storage_total=$((storage_total/1024))
+storage_total=$(echo "$storage_total/1024" | bc)
+echo "Total storage: $storage_total GB"
 
 # Gather other important statistics
 load_average=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}')
