@@ -11,7 +11,7 @@ mem_total=$(echo "$mem_info" | grep "Mem:" | awk '{print $2}')
 
 # Gather storage information
 storage_info=$(df -h)
-storage_total=$(echo "$storage_info" | grep "^/dev/" | awk '{print $2}')
+storage_total=$(echo "$storage_info" / | awk '{print $2}')
 
 # Gather other important statistics
 load_average=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}')
