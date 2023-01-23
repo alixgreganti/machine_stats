@@ -10,8 +10,22 @@ mem_info=$(free -h)
 mem_total=$(echo "$mem_info" | grep "Mem:" | awk '{print $2}')
 
 # Gather storage information
-storage_info=$(df -h)
-storage_total=$(echo "$storage_info" / | awk '{print $2}')
+storage_info=$(df -h | awk '{print $2}')
+storage_total=0
+for i in $storage_info; do
+    if [[ $i =~ [0-9]+[MGT] ]]; then
+        i=${i%[MGT]}
+        if [[ $i =~ [0-9]+ ]]; then
+            if [[ ${i: -1} == "T" ]]; then
+                i=$((i*1024*1024))
+            elif [[ ${i: -1} == "G" ]]; then
+                i=$((i*1024))
+            fi
+            storage_total=$((storage_total+i))
+        fi
+    fi
+done
+storage_total=$((storage_total/1024))
 
 # Gather other important statistics
 load_average=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}')
